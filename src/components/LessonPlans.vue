@@ -16,6 +16,21 @@ export default {
         </span>
       </el-col>
     </el-row>
+    <div class="time-color">
+      <el-row class="time-color-row" v-for="(item, index) in personList" :key="index">
+        <el-col
+          :span="computedDate(item.start, item.end).divLength"
+          :offset="computedDate(item.start, item.end).offset"
+        >
+        <div
+          class="time-color-inner"
+          :style="{ backgroundColor: item.color }"
+        >
+          {{ `${item.name} ${item.start}-${item.end}` }}
+        </div>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 <script lang='ts' setup>
@@ -47,14 +62,35 @@ const dateArr = ref<any[]>([
   "21:00",
 ])
 const personList = ref<any[]>([
-  { name: '张三', date: '', start: '', end: '' }
+  { name: '张三', date: '2022-10-10', start: '8:00', end: '12:00', color: '#FF6666' },
+  { name: '李四', date: '2022-10-10', start: '13:30', end: '16:00', color: '#FF9933' },
 ])
+const computedDate = (startTime: string, endTime: string) => {
+  const startTimeInDateArr = dateArr.value.findIndex((time) => time === startTime)
+  const endTimeInDateArr = dateArr.value.findIndex((time) => time === endTime)
+  const divLength = endTimeInDateArr - startTimeInDateArr
+  return {
+    divLength,
+    offset: startTimeInDateArr
+  }
+}
 </script>
 
 <style lang="less" scoped>
 .c-grid-container {
   .time-span {
     font-size: 18px;
+  }
+  .time-color {
+    .time-color-row {
+      margin-top: 10px;
+      .time-color-inner {
+        height: 30px;
+        border-radius: 5px;
+        line-height: 30px;
+        text-align: center;
+      }
+    }
   }
 }
 </style>
