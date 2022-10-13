@@ -4,7 +4,7 @@ export default {
 }
 </script>
 <template>
-  <el-aside class="aside-container" width="200px">
+  <el-aside class="aside-container" width="150px">
     <el-menu @select="selectMenu">
       <el-menu-item
         v-for="item in menus"

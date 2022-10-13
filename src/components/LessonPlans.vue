@@ -19,14 +19,15 @@ export default {
     <div class="time-color">
       <el-row class="time-color-row" v-for="(item, index) in personList" :key="index">
         <el-col
-          :span="computedDate(item.start, item.end).divLength"
-          :offset="computedDate(item.start, item.end).offset"
+          :span="computedDate(item.courseTimeStart, item.courseTimeEnd).divLength"
+          :offset="computedDate(item.courseTimeStart, item.courseTimeEnd).offset"
         >
         <div
           class="time-color-inner"
           :style="{ backgroundColor: item.color }"
+          @click="showDetailData(item)"
         >
-          {{ `${item.name} ${item.start}-${item.end}` }}
+          {{ `${item.stuName} ${item.courseTimeStart}-${item.courseTimeEnd}` }}
         </div>
         </el-col>
       </el-row>
@@ -35,6 +36,8 @@ export default {
 </template>
 <script lang='ts' setup>
 import { ElRow, ElCol } from 'element-plus'
+import { isEmpty } from 'lodash-es'
+
 const dateArr = ref<any[]>([
   "8:00",
   "8:30",
@@ -61,10 +64,18 @@ const dateArr = ref<any[]>([
   "20:30",
   "21:00",
 ])
-const personList = ref<any[]>([
-  { name: '张三', date: '2022-10-10', start: '8:00', end: '12:00', color: '#FF6666' },
-  { name: '李四', date: '2022-10-10', start: '13:30', end: '16:00', color: '#FF9933' },
-])
+
+const props = defineProps({
+  listData: {
+    type: Array,
+    required: true
+  }
+})
+
+const emits = defineEmits(['onClickHandle'])
+
+const personList = ref<any[]>([])
+
 const computedDate = (startTime: string, endTime: string) => {
   const startTimeInDateArr = dateArr.value.findIndex((time) => time === startTime)
   const endTimeInDateArr = dateArr.value.findIndex((time) => time === endTime)
@@ -73,6 +84,23 @@ const computedDate = (startTime: string, endTime: string) => {
     divLength,
     offset: startTimeInDateArr
   }
+}
+
+watch(
+  () => props.listData,
+  (newVal) => {
+    if (!isEmpty(newVal)) {
+      personList.value = newVal
+    }
+  },
+  {
+    immediate: true,
+    deep: true
+  }
+)
+
+const showDetailData = (data: any) => {
+  emits('onClickHandle', data)
 }
 </script>
 
@@ -89,6 +117,7 @@ const computedDate = (startTime: string, endTime: string) => {
         border-radius: 5px;
         line-height: 30px;
         text-align: center;
+        cursor: pointer;
       }
     }
   }

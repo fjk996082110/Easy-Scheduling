@@ -15,22 +15,56 @@ export default {
             placeholder="Pick a day"
             size="large"
           />
+          <el-button type="primary" class="search-btn">
+            搜索 <el-icon><Search /></el-icon>
+          </el-button>
         </div>
-        <el-button type="primary" @click="onAddHandle">Primary</el-button>
+        <el-button type="primary" @click="onAddHandle">
+          添加 <el-icon> <Plus /></el-icon>
+        </el-button>
       </el-col>
     </el-row>
     <div class="lesson-plans-container">
-      <lesson-plans></lesson-plans>
+      <lesson-plans :listData="personList" @onClickHandle="clickShowDetail"></lesson-plans>
     </div>
   </div>
+  <course-add-dialog v-model:show="showDialog" :courseData="dataItem"></course-add-dialog>
 </template>
 <script lang='ts' setup>
-import { ElRow, ElCol, ElButton, ElDatePicker } from 'element-plus'
-import LessonPlans from '../../components/LessonPlans.vue';
+import { ElRow, ElCol, ElButton, ElDatePicker, ElIcon } from 'element-plus'
+import { Plus, Search } from '@element-plus/icons-vue'
+import LessonPlans from '../../components/LessonPlans.vue'
+import courseAddDialog from '../../components/courseAddDialog.vue'
+
 const chooseDate = ref<any>()
+const dataItem = ref<Object>({})
+const showDialog = ref<Boolean>(false)
+
+const personList = ref<any[]>([
+  { stuName: '张三', courseDate: '2022-10-10', courseTimeStart: '8:00', courseTimeEnd: '12:00', color: '#FF6666' },
+  { stuName: '李四', courseDate: '2022-10-10', courseTimeStart: '13:30', courseTimeEnd: '16:00', color: '#FF9933' },
+])
+
+watch(
+  showDialog,
+  (newVal) => {
+    if (!newVal) {
+      dataItem.value = {}
+    }
+  },
+  {
+    immediate: true
+  }
+)
 
 const onAddHandle = () => {
-  console.log('add');
+  dataItem.value = {}
+  showDialog.value = true
+}
+
+const clickShowDetail = (item: any) => {
+  showDialog.value = true
+  dataItem.value = item
 }
 </script>
 
@@ -43,6 +77,10 @@ const onAddHandle = () => {
       display: flex;
       justify-content: space-between;
       align-items: center;
+
+      .search-btn {
+        margin-left: 10px;
+      }
     }
   }
   .lesson-plans-container {
