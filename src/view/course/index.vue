@@ -4,6 +4,7 @@ export default {
 }
 </script>
 <template>
+<BaseLayout>
   <div class="course-container">
     <el-row>
       <el-col :span="24">
@@ -29,6 +30,7 @@ export default {
     </div>
   </div>
   <course-add-dialog v-model:show="showDialog" :courseData="dataItem"></course-add-dialog>
+</BaseLayout>
 </template>
 <script lang='ts' setup>
 import { ElRow, ElCol, ElButton, ElDatePicker, ElIcon } from 'element-plus'

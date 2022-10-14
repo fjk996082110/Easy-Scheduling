@@ -7,7 +7,7 @@ export default {
   <el-header class="header-wrap">
     <div class="logo-name">LOGONAME</div>
     <div class="user-menu">
-      <div class="user-name">USER</div>
+      <div class="user-name">{{ userInfo?.username }}</div>
       <el-dropdown @command="menuClick">
         <div class="user-avatar">
           <img src="../../assets/logo.png" alt="avatar">
@@ -25,14 +25,19 @@ export default {
 <script lang='ts' setup>
 import { ElHeader, ElDropdown, ElDropdownMenu } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { appStore } from '../../store/app';
 
 const router = useRouter()
+const store = appStore()
+
+const userInfo = computed(() => store.userInfo)
 
 const menuClick = (command: string | number | object) => {
   if (command === 'goHome') {
     router.push('/home')
   } else if (command === 'logout') {
-    console.log('logout');
+    store.logout()
+    router.push('/login')
   }
 }
 </script>

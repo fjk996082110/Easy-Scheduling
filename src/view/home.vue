@@ -5,7 +5,9 @@ export default {
 </script>
 
 <template>
-  <div>HOME</div>
+  <BaseLayout>
+    <div>HOME</div>
+  </BaseLayout>
 </template>
 
 <script lang="ts" setup>
