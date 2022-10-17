@@ -94,7 +94,7 @@ import { isEmpty } from 'lodash';
 //   callback()
 // }
 
-const emit = defineEmits(['update:show', 'addCourse'])
+const emit = defineEmits(['update:show', 'addCourse', 'updateCourse'])
 
 const props = defineProps({
   show: {
@@ -110,6 +110,7 @@ const props = defineProps({
 const stuColor = ref<String>('')
 const ruleFormRef = ref<FormInstance>()
 const showAddDialog = ref<Boolean>(false)
+const isAdd = ref<Boolean>(true)
 
 interface CourseForm {
   id?: string,
@@ -149,6 +150,7 @@ watch(
   (newVal: any) => {
     courseForm.value = newVal
     buttonName.value = isEmpty(courseForm.value) ? '新增' : '修改'
+    isAdd.value = isEmpty(courseForm.value)
   },
   {
     immediate: true,
@@ -169,7 +171,11 @@ const submitForm = (formEl: FormInstance | undefined) => {
       type: 'error'
     })
   }
-  emit('addCourse', courseForm.value)
+  if (isAdd.value) {
+    emit('addCourse', courseForm.value)
+  } else {
+    emit('updateCourse', courseForm.value)
+  }
   showAddDialog.value = false
 }
 

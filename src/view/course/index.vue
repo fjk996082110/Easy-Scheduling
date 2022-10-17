@@ -42,6 +42,7 @@ export default {
     v-model:show="showDialog"
     :courseData="dataItem"
     @addCourse="add"
+    @updateCourse="update"
   ></course-add-dialog>
 </BaseLayout>
 </template>
@@ -50,7 +51,7 @@ import { ElRow, ElCol, ElButton, ElDatePicker, ElIcon, ElEmpty, ElMessage } from
 import { Plus, Search } from '@element-plus/icons-vue'
 import LessonPlans from '../../components/LessonPlans.vue'
 import courseAddDialog from '../../components/courseAddDialog.vue'
-import { getCourseListByDate, addCourse } from '../../api/course'
+import { getCourseListByDate, addCourse, updateCourse } from '../../api/course'
 import dayjs from 'dayjs'
 
 const chooseDate = ref<any>()
@@ -98,12 +99,21 @@ const getCourseList = (current: number, date: string) => {
 const add = (data: object) => {
   addCourse(data).then((res: any) => {
     if (res.msg === '添加成功') {
-      ElMessage({
-        message: '添加成功',
-        type: 'success'
-      })
+      showMessage('添加成功', 'success')
       goBackToday()
+    } else {
+      showMessage('添加失败', 'error')
     }
+  }).catch((err) => {
+    return showMessage(`添加失败:${err}`, 'error')
+  })
+}
+// 修改
+const update = (data: any) => {
+  updateCourse(data).then((res: any) => {
+    res.msg === '修改成功' ? showMessage('修改成功', 'success') : showMessage('修改失败', 'error')
+  }).catch((err) => {
+    return showMessage(`添加失败:${err}`, 'error')
   })
 }
 // 搜索
@@ -121,6 +131,13 @@ const goBackToday = () => {
   chooseDate.value = ''
   currentPage.value = 1
   getCourseList(currentPage.value, nowDateToShow.value)
+}
+// 弹窗
+const showMessage = (message: string, type: any) => {
+  ElMessage({
+    message,
+    type
+  })
 }
 </script>
 

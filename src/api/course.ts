@@ -20,3 +20,11 @@ export function addCourse(data: object) {
     data
   })
 }
+// 修改
+export function updateCourse(data: any) {
+  return request({
+    url: '/updateCourse',
+    method: 'post',
+    data
+  })
+}
