@@ -5,7 +5,7 @@ export default {
 </script>
 <template>
   <el-dialog v-model="showAddDialog" title="新增课时">
-    <el-form :model="courseForm" ref="ruleFormRef" :rules="rules">
+    <el-form :model="courseForm" ref="ruleFormRef">
       <el-form-item label="姓名" label-width="100px" prop="stuName">
         <el-col :span="11">
           <el-input
@@ -64,7 +64,7 @@ export default {
       <span class="dialog-footer">
         <el-button @click="onCancelHandle">取消</el-button>
         <el-button type="primary" @click="submitForm(ruleFormRef)">
-          {{ showTip }}
+          {{ buttonName }}
         </el-button>
       </span>
     </template>
@@ -81,36 +81,20 @@ import {
   ElDatePicker,
   ElTimeSelect,
   ElColorPicker,
+ElMessage,
 } from 'element-plus'
 import type { FormInstance } from 'element-plus'
+import { isEmpty } from 'lodash';
 
 // 表单规则
-const checkNameIsEmpty = (rule: any, value: any, callback: any) => {
-  if (!value) {
-    return callback(new Error('不能为空!'))
-  }
-  callback()
-}
-const checkDateIsEmpty = (rule: any, value: any, callback: any) => {
-  if (!courseForm.value.courseDate) {
-    return callback(new Error('日期不能为空!'))
-  }
-  callback()
-}
-const checkStartTime = (rule: any, value: any, callback: any) => {
-  if (!courseForm.value.courseTimeStart) {
-    return callback(new Error('开始时间不能为空!'))
-  }
-  callback()
-}
-const checkEndTime = (rule: any, value: any, callback: any) => {
-  if (!courseForm.value.courseTimeEnd) {
-    return callback(new Error('结束时间不能为空!'))
-  }
-  callback()
-}
+// const checkNameIsEmpty = (rule: any, value: any, callback: any) => {
+//   if (!value) {
+//     return callback(new Error('不能为空!'))
+//   }
+//   callback()
+// }
 
-const emit = defineEmits(['update:show'])
+const emit = defineEmits(['update:show', 'addCourse'])
 
 const props = defineProps({
   show: {
@@ -143,14 +127,10 @@ const courseForm = ref<CourseForm>({
   courseTimeEnd: '',
   color: stuColor
 })
-const rules = reactive({
-  stuName: [{ validator: checkNameIsEmpty, trigger: 'blur' }],
-  cDate: [{ validator: checkDateIsEmpty, trigger: 'change' }],
-  cStartTime: [{ validator: checkStartTime, trigger: 'change' }],
-  cEndTime: [{ validator: checkEndTime, trigger: 'change' }]
-})
-
-const showTip = computed(() => props.courseData ? '修改' : '新增')
+// const rules = reactive({
+//   stuName: [{ validator: checkNameIsEmpty, trigger: 'blur' }],
+// })
+const buttonName = ref<string>('新增')
 
 watch(showAddDialog, (value) => {
   emit('update:show', value)
@@ -168,6 +148,7 @@ watch(
   () => props.courseData,
   (newVal: any) => {
     courseForm.value = newVal
+    buttonName.value = isEmpty(courseForm.value) ? '新增' : '修改'
   },
   {
     immediate: true,
@@ -181,15 +162,15 @@ const onCancelHandle = () => {
 
 const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
+  const { stuName ,courseDate, courseTimeStart, courseTimeEnd, color } = courseForm.value
+  if (!stuName || !courseDate || !courseTimeStart || !courseTimeEnd || !color) {
+    return ElMessage({
+      message: '各项不能为空',
+      type: 'error'
+    })
+  }
+  emit('addCourse', courseForm.value)
   showAddDialog.value = false
-  formEl.validate((valid) => {
-    if (valid) {
-      console.log('submit!')
-    } else {
-      console.log('error submit!')
-      return false
-    }
-  })
 }
 
 </script>

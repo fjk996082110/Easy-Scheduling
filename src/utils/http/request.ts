@@ -30,12 +30,18 @@ request.interceptors.request.use(
 
 request.interceptors.response.use(
   (response: AxiosResponse) => {
+    const { status } = response.data
     if (response.headers.authorization) {
       setAuth(response.headers.authorization)
     }
-    if (response.data.status === 201) {
+    if (status === 201) {
       return ElMessage({
         message: '账号或密码错误',
+        type: 'error',
+      })
+    } else if (status === 401) {
+      ElMessage({
+        message: '发生错误,请重试',
         type: 'error',
       })
     }
